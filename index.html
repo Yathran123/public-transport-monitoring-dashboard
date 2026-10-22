@@ -2,69 +2,340 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Public Transport Monitoring Dashboard</title>
-<style>
-body { font-family: Arial; margin: 25px; background: #f1f5f9; }
-header { background: #12345a; color: white; padding: 20px; }
-section { background: white; padding: 15px; margin-top: 18px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
-th { background: #dce8f5; }
-input { padding: 10px; margin: 10px 0; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Transport Monitoring Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #12345a;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 10px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 25px auto;
+            padding: 0 16px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .summary h3 {
+            color: #64748b;
+            margin-top: 0;
+        }
+
+        .summary strong {
+            font-size: 25px;
+            color: #12345a;
+        }
+
+        input {
+            width: 100%;
+            max-width: 350px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin: 10px 0 15px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th, td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #e2eaf4;
+        }
+
+        .low, .normal {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .moderate {
+            color: #a16207;
+            font-weight: bold;
+        }
+
+        .high, .delayed, .diversion, .closed {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .alert {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+        }
+
+        .advisory {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #12345a;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        footer {
+            background: #12345a;
+            color: white;
+            padding: 18px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 14px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
 <header>
-<h1>Public Transport Monitoring Dashboard</h1>
-<p>Simulated bus arrival and service monitoring</p>
+    <h1>Public Transport Monitoring Dashboard</h1>
+    <p>Metropolitan Transport Authority</p>
+    <p>Bus Routes | Estimated Arrivals | Crowd Monitoring</p>
+    <p id="clock">Simulated transport monitoring system</p>
 </header>
 
-<section>
-<h2>Bus Routes and Arrivals</h2>
-<input id="search" placeholder="Filter by route number" oninput="showBuses()">
-<table>
-<thead>
-<tr><th>Route</th><th>Source</th><th>Destination</th>
-<th>ETA</th><th>Crowd</th><th>Status</th></tr>
-</thead>
-<tbody id="busTable"></tbody>
-</table>
-</section>
+<div class="container">
 
-<section>
-<h2>Service Disruptions</h2>
-<p>Route 102: Delayed by 15 minutes due to traffic.</p>
-<p>Route 103: Temporary stop closure at Central Market.</p>
-<p>Route 104: Diversion due to road maintenance.</p>
-</section>
+    <section class="summary">
+        <div class="card">
+            <h3>Routes Monitored</h3>
+            <strong id="routeCount">4</strong>
+        </div>
 
-<section>
-<h2>Passenger Advisories</h2>
-<p>Allow extra time during peak hours.</p>
-<p>Check alternative stops during service disruptions.</p>
-<p>All transport information on this page is simulated.</p>
-</section>
+        <div class="card">
+            <h3>Active Disruptions</h3>
+            <strong>3</strong>
+        </div>
+
+        <div class="card">
+            <h3>High Crowd Routes</h3>
+            <strong>1</strong>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Bus Routes and Estimated Arrivals</h2>
+        <p>Search using a bus route number to filter the results.</p>
+
+        <label for="routeSearch">Filter by route number:</label><br>
+        <input
+            type="text"
+            id="routeSearch"
+            placeholder="Enter route number, e.g. 101"
+            oninput="filterRoutes()"
+        >
+
+        <p id="resultCount">Showing 4 buses</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Route</th>
+                        <th>Source Stop</th>
+                        <th>Destination Stop</th>
+                        <th>Arrival Time</th>
+                        <th>Crowd Level</th>
+                        <th>Service Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="busTable"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Service Disruptions</h2>
+
+        <div class="alert">
+            <strong>Route 102 — Delay</strong>
+            <p>Expected delay of 15 minutes due to heavy traffic near City Centre.</p>
+        </div>
+
+        <div class="alert">
+            <strong>Route 103 — Temporary Stop Closure</strong>
+            <p>Central Market stop is temporarily closed. Passengers should use the next available stop.</p>
+        </div>
+
+        <div class="alert">
+            <strong>Route 104 — Route Diversion</strong>
+            <p>A diversion is in effect because of road maintenance near Tech Park.</p>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Passenger Advisories</h2>
+
+        <div class="advisory">
+            Allow extra travel time during peak traffic hours.
+        </div>
+
+        <div class="advisory">
+            Check alternative stops when your regular stop is closed.
+        </div>
+
+        <div class="advisory">
+            Crowd levels and estimated arrival times are simulated, not live transport data.
+        </div>
+
+        <button onclick="refreshAdvisory()">Refresh Advisory Information</button>
+
+        <p id="updated">Last refreshed: Not yet refreshed</p>
+    </section>
+
+</div>
+
+<footer>
+    <p>Public Transport Monitoring Dashboard</p>
+    <p>Demonstration project using simulated transport data</p>
+</footer>
 
 <script>
-const buses = [
-{route:"101",source:"Central Station",destination:"Airport",eta:"5 min",crowd:"Low",status:"Normal"},
-{route:"102",source:"City Centre",destination:"University",eta:"15 min",crowd:"High",status:"Delayed"},
-{route:"103",source:"Central Market",destination:"Bus Terminal",eta:"8 min",crowd:"Moderate",status:"Diversion"},
-{route:"104",source:"Railway Station",destination:"Tech Park",eta:"12 min",crowd:"Low",status:"Normal"}
-];
+    const buses = [
+        {
+            route: "101",
+            source: "Central Station",
+            destination: "Airport",
+            arrival: "5 minutes",
+            crowd: "Low",
+            status: "Normal"
+        },
+        {
+            route: "102",
+            source: "City Centre",
+            destination: "University",
+            arrival: "15 minutes",
+            crowd: "High",
+            status: "Delayed"
+        },
+        {
+            route: "103",
+            source: "Central Market",
+            destination: "Bus Terminal",
+            arrival: "8 minutes",
+            crowd: "Moderate",
+            status: "Diversion"
+        },
+        {
+            route: "104",
+            source: "Railway Station",
+            destination: "Tech Park",
+            arrival: "12 minutes",
+            crowd: "Low",
+            status: "Normal"
+        }
+    ];
 
-function showBuses() {
-const query = document.getElementById("search").value.trim();
-const filtered = buses.filter(bus => bus.route.includes(query));
-document.getElementById("busTable").innerHTML = filtered.map(bus =>
-`<tr><td>${bus.route}</td><td>${bus.source}</td>
-<td>${bus.destination}</td><td>${bus.eta}</td>
-<td>${bus.crowd}</td><td>${bus.status}</td></tr>`
-).join("");
-}
-showBuses();
+    function filterRoutes() {
+        const searchValue = document
+            .getElementById("routeSearch")
+            .value.trim();
+
+        const filteredBuses = buses.filter(bus =>
+            bus.route.includes(searchValue)
+        );
+
+        const table = document.getElementById("busTable");
+
+        table.innerHTML = filteredBuses.map(bus => `
+            <tr>
+                <td>${bus.route}</td>
+                <td>${bus.source}</td>
+                <td>${bus.destination}</td>
+                <td>${bus.arrival}</td>
+                <td class="${bus.crowd.toLowerCase()}">${bus.crowd}</td>
+                <td class="${bus.status.toLowerCase()}">${bus.status}</td>
+            </tr>
+        `).join("");
+
+        document.getElementById("resultCount").textContent =
+            "Showing " + filteredBuses.length + " buses";
+    }
+
+    function refreshAdvisory() {
+        const currentTime = new Date().toLocaleTimeString();
+
+        document.getElementById("updated").textContent =
+            "Last refreshed: " + currentTime;
+    }
+
+    function updateClock() {
+        document.getElementById("clock").textContent =
+            "Dashboard time: " + new Date().toLocaleString();
+    }
+
+    filterRoutes();
+    updateClock();
 </script>
+
 </body>
 </html>
+
