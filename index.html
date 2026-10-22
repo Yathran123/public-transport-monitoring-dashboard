@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Public Transport Monitoring Dashboard</title>
+<style>
+body { font-family: Arial; margin: 25px; background: #f1f5f9; }
+header { background: #12345a; color: white; padding: 20px; }
+section { background: white; padding: 15px; margin-top: 18px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+th { background: #dce8f5; }
+input { padding: 10px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<header>
+<h1>Public Transport Monitoring Dashboard</h1>
+<p>Simulated bus arrival and service monitoring</p>
+</header>
+
+<section>
+<h2>Bus Routes and Arrivals</h2>
+<input id="search" placeholder="Filter by route number" oninput="showBuses()">
+<table>
+<thead>
+<tr><th>Route</th><th>Source</th><th>Destination</th>
+<th>ETA</th><th>Crowd</th><th>Status</th></tr>
+</thead>
+<tbody id="busTable"></tbody>
+</table>
+</section>
+
+<section>
+<h2>Service Disruptions</h2>
+<p>Route 102: Delayed by 15 minutes due to traffic.</p>
+<p>Route 103: Temporary stop closure at Central Market.</p>
+<p>Route 104: Diversion due to road maintenance.</p>
+</section>
+
+<section>
+<h2>Passenger Advisories</h2>
+<p>Allow extra time during peak hours.</p>
+<p>Check alternative stops during service disruptions.</p>
+<p>All transport information on this page is simulated.</p>
+</section>
+
+<script>
+const buses = [
+{route:"101",source:"Central Station",destination:"Airport",eta:"5 min",crowd:"Low",status:"Normal"},
+{route:"102",source:"City Centre",destination:"University",eta:"15 min",crowd:"High",status:"Delayed"},
+{route:"103",source:"Central Market",destination:"Bus Terminal",eta:"8 min",crowd:"Moderate",status:"Diversion"},
+{route:"104",source:"Railway Station",destination:"Tech Park",eta:"12 min",crowd:"Low",status:"Normal"}
+];
+
+function showBuses() {
+const query = document.getElementById("search").value.trim();
+const filtered = buses.filter(bus => bus.route.includes(query));
+document.getElementById("busTable").innerHTML = filtered.map(bus =>
+`<tr><td>${bus.route}</td><td>${bus.source}</td>
+<td>${bus.destination}</td><td>${bus.eta}</td>
+<td>${bus.crowd}</td><td>${bus.status}</td></tr>`
+).join("");
+}
+showBuses();
+</script>
+</body>
+</html>
